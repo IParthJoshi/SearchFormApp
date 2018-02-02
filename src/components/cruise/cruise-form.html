@@ -1,2 +1,42 @@
-<div><h1>{{msg}}</h1>
-<h2>{{propA}}</h2></div>
+<!-- <div><h1>{{msg}}</h1>
+<h2>{{propA}}</h2></div> -->
+    <div class="container">
+      <h1>Cruise Search form</h1>
+      <!-- <dropdown-widget :options="destinationList"></dropdown-widget> -->
+      <div class="row">
+        <div class="col-md-6 col-xs-6 col-sm-6">
+          <label>Destination</label>
+          <v-select label="name" value="id" multiple :options="destinationList" v-model="selectedDestinations"></v-select>
+        </div>
+        <div class="col-md-6 col-xs-6 col-sm-6">
+          <label for="DeparturePort">Departure Port</label>
+          <v-select label="name" value="id" multiple :options="departurePortList" v-model="selectedDeparturePorts"></v-select>
+        </div>
+      </div>    
+      <div class="row">
+        <div class="col-md-6 col-xs-6 col-sm-6">    
+          <label for="CruiseLines">Crusie Lines</label>
+          <v-select label="name" value="id" multiple :options="cruiseLineList" v-model="selectedCruiseLines"></v-select>
+        </div>
+        <div class="col-md-6 col-xs-6 col-sm-6">
+          <label for="CruiseShips">Crusie Ships</label>
+          <v-select label="name" value="id" multiple :options="shipList" v-model="selectedCruiseShips"></v-select>
+        </div>
+      </div>
+    <div class="row">
+      <div class="col-md-6 col-xs-6 col-sm-6">
+        <label for="CruiseLength">Crusie Length</label>
+        <v-select label="name" multiple :options="durationList" v-model="selectedDuration"></v-select>
+      </div> 
+      <div class="col-md-6 col-xs-6 col-sm-6">
+        <label for="DepartureDate">Sailings Date</label>
+        <v-select label="name" value="id" :options="sailingDateList" v-model="selectedSailingDate"></v-select>
+      </div>
+    </div>      
+    <hr>
+      <div class="row">
+        <div class="col-md-3 col-xs-12 col-sm-6">
+        <button @click="displayData" class="btn btn-primary btn-lg btn-block">Submit</button>
+        </div>
+      </div>
+    </div>

@@ -17,8 +17,7 @@ import CruiseForm from './components/cruise/cruise-form.vue';
 @Component({
   components: {'cruise-form':CruiseForm}
 })
-export default class App extends Vue{   
-    
+export default class App extends Vue{       
   }
 </script>
 

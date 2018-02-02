@@ -1,0 +1,29 @@
+
+    
+    <div class="container">
+        <h2 >Apricot</h2>
+        
+        <ul class="nav nav-tabs">
+            <li  v-if="searchType.search('cruise') != -1" class="Active"><a data-toggle="tab" href="#cruise">Cruise</a></li>
+            <li v-if="searchType.search('air') != -1 " class="Active"><a data-toggle="tab" href="#air">Air</a></li>
+            
+          
+        </ul>
+      
+        <div class="tab-content">
+          <div id="cruise" class="tab-pane fade">
+              <cruise-form></cruise-form>             
+          </div>
+
+
+            
+        <div id="air" class="tab-pane fade">
+              <air-form></air-form>
+          </div>
+
+
+          
+          
+        </div>
+      </div>
+      
