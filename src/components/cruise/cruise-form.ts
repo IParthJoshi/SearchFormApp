@@ -33,27 +33,30 @@ export default class CruiseForm extends Vue{
     /**
      * lifecycle hook - called when component is created
      */
-    created() {
-        this.initializeData();
+    created() {        
+        this.populateFacetData();
     }
-
     
-    initializeData() {
+    populateFacetData() {
         this.getMasterData();
         this.getFacets();
     }
 
     //to call all master api to get initial data
-    getMasterData(): void {
+    async getMasterData(){       
 
-        masterService.getMasters().then(res=>{
-            debugger;
+        // masterService.getMastersAsync().then(res=>{
+        //     debugger;
+        //     this.destinations = res.data;
+        // }).catch(e => {
+        //     console.log(e);
+        // })
+        debugger;
+        //let destinations = 
+        await masterService.getMastersAsync([3]).then(res => {
             this.destinations = res.destinations;
-        }).catch(e => {
-            console.log(e);
-        })
-
-        axiosInstance.get('master/all/cruiseline')
+        });
+        await axiosInstance.get('master/all/cruiseline')
         .then(response => {            
             this.cruiseLines = response.data.data;
         })
@@ -61,7 +64,7 @@ export default class CruiseForm extends Vue{
             console.log(e);
         })
 
-        axiosInstance.get('master/all/ship')
+        await axiosInstance.get('master/all/ship')
         .then(response => {
             this.ships = response.data.data;
         })
@@ -69,19 +72,19 @@ export default class CruiseForm extends Vue{
             console.log(e);
         })
 
-        axiosInstance.get('master/all/port')
+        await axiosInstance.get('master/all/port')
         .then(response => {
             this.departurePorts = response.data.data;
         })
     }
 
-    //to call faceta api
-    getFacets() {
-        axiosInstance.get('cruise/facets')
+    //to call facet api
+    async getFacets() {
+        await axiosInstance.get('cruise/facets')
         .then(response => {
             this.facetsData = response.data.data;
         })
-        .then( () => {          
+        .then(() => {          
             this.setDataFromFacests()
         })
     }
