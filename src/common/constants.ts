@@ -13,6 +13,9 @@ export module GenericParams {
         public static readonly departureDateTime: string = "departureDateTime";        
         public static readonly price: string = "price";
     }
+}
+export class Constants {    
+    public static readonly nameNotAvailableText: string = "N/A";
 }    
     export class HeadersKeys {
         public static readonly currencyCode: string = "currencyCode";

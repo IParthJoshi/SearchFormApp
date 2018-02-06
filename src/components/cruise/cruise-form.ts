@@ -4,11 +4,15 @@ import {Component, Prop, Watch } from "vue-property-decorator";
 
 import { axiosInstance } from "../../config/httpClient/axios-config";
 import { masterService }  from '../../services/shared/master.service';
+import { cruiseService } from "../../services/cruise.service";
+import { Facet } from "../../models/facet.model";
+import { FacetValue } from "../../models/facetValue.model";
 
 @Component
 export default class CruiseForm extends Vue{
-    //For holding api returned data
-    facetsData: any;
+    
+    facetsArray: Array<Facet> = new Array<Facet>();
+
     destinations: Array<any> = new Array<any>();
     cruiseLines: Array<any> = new Array<any>();
     ships: Array<any> = new Array<any>();
@@ -34,13 +38,25 @@ export default class CruiseForm extends Vue{
      * lifecycle hook - called when component is created
      */
     created() {        
-        this.populateFacetData();
+        this.populateSearchFacetData();
     }
     
-    populateFacetData() {
-        this.getMasterData();
-        this.getFacets();
+    async populateSearchFacetData() {
+        // this.getMasterData();
+        // this.getFacetsData();
+        await cruiseService.getCruiseFacets().then(result =>{
+            this.facetsArray = result.data.facets;
+            this.setFacetsToDropdownList(this.facetsArray);
+        })
     }
+
+    setFacetsToDropdownList(facets: Array<Facet>){
+        if (facets && facets.length > 0) {
+            
+        }
+    }
+
+
 
     //to call all master api to get initial data
     async getMasterData(){       
@@ -51,38 +67,36 @@ export default class CruiseForm extends Vue{
         // }).catch(e => {
         //     console.log(e);
         // })
-        debugger;
-        //let destinations = 
-        await masterService.getMastersAsync([3]).then(res => {
-            this.destinations = res.destinations;
-        });
-        await axiosInstance.get('master/all/cruiseline')
-        .then(response => {            
-            this.cruiseLines = response.data.data;
-        })
-        .catch(e => {
-            console.log(e);
-        })
+        // debugger;        
+        // await masterService.getMastersAsync([3]).then(res => {
+        //     this.destinationList = res.destinations;
+        // });
+        // await axiosInstance.get('master/all/cruiseline')
+        // .then(response => {            
+        //     this.cruiseLines = response.data.data;
+        // })
+        // .catch(e => {
+        //     console.log(e);
+        // })
 
-        await axiosInstance.get('master/all/ship')
-        .then(response => {
-            this.ships = response.data.data;
-        })
-        .catch(e => {
-            console.log(e);
-        })
+        // await axiosInstance.get('master/all/ship')
+        // .then(response => {
+        //     this.ships = response.data.data;
+        // })
+        // .catch(e => {
+        //     console.log(e);
+        // })
 
-        await axiosInstance.get('master/all/port')
-        .then(response => {
-            this.departurePorts = response.data.data;
-        })
-    }
-
+        // await axiosInstance.get('master/all/port')
+        // .then(response => {
+        //     this.departurePorts = response.data.data;
+        // })
+    }    
     //to call facet api
-    async getFacets() {
+    async getFacetsData() {
         await axiosInstance.get('cruise/facets')
         .then(response => {
-            this.facetsData = response.data.data;
+            //this.facetsData = response.data.data;
         })
         .then(() => {          
             this.setDataFromFacests()
@@ -92,93 +106,93 @@ export default class CruiseForm extends Vue{
     //to refine data according to client selection
     setDataFromFacests(): void {
         // console.log(this.facetsData);
-        if (this.facetsData != null) {       
-            this.facetsData.facets.forEach( (element: any) => {                
-                let i = 0;
-                if (element.key === "duration") {
-                    i = 0;
-                    element.values.forEach( (duration: any) => {
-                        if (duration.to != undefined) {
-                            let durationData = {
-                                id: duration.from + " To " + duration.to,
-                                name: duration.from + " To " + duration.to
-                            }
-                            this.durationList.push(durationData);                           
-                        } else {
-                            let durationData = {
-                                id: duration.from + " and More",
-                                name: duration.from + " and More"
-                            }
-                            this.durationList.push(durationData);
-                        }
-                        i++;
-                    });
-                }
+        // if (this.facetsData != null) {       
+        //     this.facetsData.facets.forEach( (element: any) => {                
+        //         let i = 0;
+        //         if (element.key === "duration") {
+        //             i = 0;
+        //             element.values.forEach( (duration: any) => {
+        //                 if (duration.to != undefined) {
+        //                     let durationData = {
+        //                         id: duration.from + " To " + duration.to,
+        //                         name: duration.from + " To " + duration.to
+        //                     }
+        //                     this.durationList.push(durationData);                           
+        //                 } else {
+        //                     let durationData = {
+        //                         id: duration.from + " and More",
+        //                         name: duration.from + " and More"
+        //                     }
+        //                     this.durationList.push(durationData);
+        //                 }
+        //                 i++;
+        //             });
+        //         }
 
-                if (element.key === "departureDateTime") {
-                    i = 0;
-                    element.values.forEach( (sailingDate: any) => {
-                        let dateString = JSON.stringify(sailingDate.from).split('-');
-                        dateString[dateString.length - 1] = dateString[dateString.length - 1].slice(0, -1);
-                        let sailingDateData = {
-                            id: dateString[1] + ' ' + dateString[2],
-                            name: dateString[1] + ' ' + dateString[2]
-                        }
-                        this.sailingDateList.push(sailingDateData);
-                        i++;
-                    });
-                }
+        //         if (element.key === "departureDateTime") {
+        //             i = 0;
+        //             element.values.forEach( (sailingDate: any) => {
+        //                 let dateString = JSON.stringify(sailingDate.from).split('-');
+        //                 dateString[dateString.length - 1] = dateString[dateString.length - 1].slice(0, -1);
+        //                 let sailingDateData = {
+        //                     id: dateString[1] + ' ' + dateString[2],
+        //                     name: dateString[1] + ' ' + dateString[2]
+        //                 }
+        //                 this.sailingDateList.push(sailingDateData);
+        //                 i++;
+        //             });
+        //         }
 
-                if (element.key === "destinationId") {
-                    element.values.forEach( (element: any) => {
-                        this.destinations.forEach( (destination) => {
-                            if (destination.id == element.value) {
-                                this.destinationList.push(destination);
-                            }
-                        })
-                    });
-                    // this.destinationList.sort( (a, b) => a.name.localeCompare(b.name));
-                    this.sortArray(this.destinationList);
-                }
+        //         if (element.key === "destinationId") {
+        //             element.values.forEach( (element: any) => {
+        //                 this.destinations.forEach( (destination) => {
+        //                     if (destination.id == element.value) {
+        //                         this.destinationList.push(destination);
+        //                     }
+        //                 })
+        //             });
+        //             // this.destinationList.sort( (a, b) => a.name.localeCompare(b.name));
+        //             this.sortArray(this.destinationList);
+        //         }
 
-                if (element.key === "departurePortCode") {
-                    element.values.forEach( (element: any) => {
-                        this.departurePorts.forEach( (port) => {
-                            if (port.code == element.value) {
-                                this.departurePortList.push(port);
-                            }
-                        })
-                    });
-                    // this.departurePortList.sort( (a, b) => a.name.localeCompare(b.name));
-                    this.sortArray(this.departurePortList);
-                }
+        //         if (element.key === "departurePortCode") {
+        //             element.values.forEach( (element: any) => {
+        //                 this.departurePorts.forEach( (port) => {
+        //                     if (port.code == element.value) {
+        //                         this.departurePortList.push(port);
+        //                     }
+        //                 })
+        //             });
+        //             // this.departurePortList.sort( (a, b) => a.name.localeCompare(b.name));
+        //             this.sortArray(this.departurePortList);
+        //         }
 
-                if (element.key === "cruiselineId") {
-                    element.values.forEach( (element: any) => {
-                        this.cruiseLines.forEach( (cruiseLine) => {
-                            if (cruiseLine.id == element.value) {
-                                this.cruiseLineList.push(cruiseLine);
-                            }
-                        })
-                    });
-                    // this.cruiseLineList.sort( (a, b) => a.name.localeCompare(b.name));
-                    this.sortArray(this.cruiseLineList);
-                }
+        //         if (element.key === "cruiselineId") {
+        //             element.values.forEach( (element: any) => {
+        //                 this.cruiseLines.forEach( (cruiseLine) => {
+        //                     if (cruiseLine.id == element.value) {
+        //                         this.cruiseLineList.push(cruiseLine);
+        //                     }
+        //                 })
+        //             });
+        //             // this.cruiseLineList.sort( (a, b) => a.name.localeCompare(b.name));
+        //             this.sortArray(this.cruiseLineList);
+        //         }
 
-                if (element.key === "shipId") {
-                    element.values.forEach( (element: any) => {
-                        this.ships.forEach( (ship) => {
-                            if (ship.id == element.value) {
-                                this.shipList.push(ship);
-                            }
-                        })
-                    });
-                    // this.shipList.sort( (a, b) => a.name.localeCompare(b.name));
-                    this.sortArray(this.shipList);
-                }
+        //         if (element.key === "shipId") {
+        //             element.values.forEach( (element: any) => {
+        //                 this.ships.forEach( (ship) => {
+        //                     if (ship.id == element.value) {
+        //                         this.shipList.push(ship);
+        //                     }
+        //                 })
+        //             });
+        //             // this.shipList.sort( (a, b) => a.name.localeCompare(b.name));
+        //             this.sortArray(this.shipList);
+        //         }
 
-            });
-        }
+        //     });
+        // }
     }
 
     sortArray(array: Array<any>): void {
